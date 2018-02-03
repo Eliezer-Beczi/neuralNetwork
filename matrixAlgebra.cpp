@@ -26,7 +26,66 @@ void Matrix<T>::fillRand() {
 	}
 }
 
-template class Matrix<int>;
-template class Matrix<float>;
+template <class T>
+Matrix<T> Matrix<T>::applyFunction(const Matrix<T> &matrixObj, const function<T(const T&)> &myActFunc) {
+	Matrix<T> result(matrixObj.rows, matrixObj.cols);
+
+	for(unsigned i = 0; i < matrixObj.rows; ++i) {
+		for(unsigned j = 0; j < matrixObj.cols; ++j) {
+			result.matrix[i][j] = myActFunc(matrixObj.matrix[i][j]);
+		}
+	}
+
+	return result;
+}
+
+template <class T>
+vector<T> Matrix<T>::toArray(const Matrix<T> &matrixObj) {
+	vector<T> result;
+
+	for(auto &&v : matrixObj.matrix) {
+		for(auto &&d : v) {
+			result.push_back(d);
+		}
+	}
+
+	return result;
+}
+
+template <class T>
+Matrix<T> Matrix<T>::toRowVector(const vector<T> &v) {
+	Matrix<T> result(1, v.size());
+
+	for(unsigned i = 0; i < v.size(); ++i){
+		result.matrix[0][i] = v[i];
+	}
+
+	return result;
+}
+
+template <class T>
+Matrix<T> Matrix<T>::toColumnVector(const vector<T> &v) {
+	Matrix<T> result(v.size(), 1);
+
+	for(unsigned i = 0; i < v.size(); ++i){
+		result.matrix[i][0] = v[i];
+	}
+
+	return result;
+}
+
+template <class T>
+Matrix<T> Matrix<T>::transpose(const Matrix<T> &matrixObj) {
+	Matrix<T> result(matrixObj.cols, matrixObj.rows);
+
+	for(unsigned i = 0; i < matrixObj.cols; ++i) {
+		for(unsigned j = 0; j < matrixObj.rows; ++j) {
+			result.matrix[i][j] = matrixObj.matrix[j][i];
+		}
+	}
+
+	return result;
+}
+
 template class Matrix<double>;
-template class Matrix<unsigned>;
+template class Matrix<long double>;

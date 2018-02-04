@@ -12,6 +12,11 @@ Matrix<T>::Matrix(unsigned const &numOfRows, unsigned const &numOfCols) {
 	srand(time(NULL));
 }
 
+template<class T>
+Matrix<T>::Matrix(const Matrix<T>&cpy){
+	*this=cpy;
+}
+
 template <class T>
 Matrix<T>::~Matrix() {
 

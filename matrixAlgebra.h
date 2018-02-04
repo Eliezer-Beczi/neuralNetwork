@@ -15,6 +15,8 @@ private:
 
 public:
 	Matrix(unsigned const&, unsigned const&);
+	\\\copy constructor
+	Matrix(const Matrix<T>&);
 	~Matrix();
 	void fillRand();
 	static Matrix<T> applyFunction(const Matrix<T>&, const function<T(const T&)>&);
@@ -36,54 +38,18 @@ public:
 	}
 
 	Matrix<T> &operator=(const Matrix<T> &matrixObj) {
+		
+		if(this==&matrixObj){
+			return *this;
+		}
+		
 		this->rows = matrixObj.rows;
 		this->cols = matrixObj.cols;
-
-		vector<vector<T>>().swap(this->matrix);
-
-		for(unsigned i = 0; i < this->rows; ++i) {
-			this->matrix.push_back(vector<T>(matrixObj.cols));
-
-			for(unsigned j = 0; j < this->cols; ++j) {
-				this->matrix[i][j] = matrixObj.matrix[i][j];
-			}
-		}
+		this->matrix=matrixObj.matrix;
 
 		return *this;
 	}
-
-	friend Matrix<T> operator+(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
-		if(matrixObj1.rows != matrixObj2.rows || matrixObj1.cols != matrixObj2.cols) {
-			throw invalid_argument("the matrices don't have the same dimension!");
-		}
-
-		Matrix<T> result(matrixObj1.rows, matrixObj1.cols);
-
-		for(unsigned i = 0; i < matrixObj1.rows; ++i) {
-			for(unsigned j = 0; j < matrixObj1.cols; ++j) {
-				result.matrix[i][j] = matrixObj1.matrix[i][j] + matrixObj2.matrix[i][j];
-			}
-		}
-
-		return result;
-	}
-
-	friend Matrix<T> operator-(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
-		if(matrixObj1.rows != matrixObj2.rows || matrixObj1.cols != matrixObj2.cols) {
-			throw invalid_argument("the matrices don't have the same dimension!");
-		}
-
-		Matrix<T> result(matrixObj1.rows, matrixObj1.cols);
-
-		for(unsigned i = 0; i < matrixObj1.rows; ++i) {
-			for(unsigned j = 0; j < matrixObj1.cols; ++j) {
-				result.matrix[i][j] = matrixObj1.matrix[i][j] - matrixObj2.matrix[i][j];
-			}
-		}
-
-		return result;
-	}
-
+	
 	Matrix<T> &operator+=(const Matrix<T> &matrixObj) {
 		if(this->rows != matrixObj.rows || this->cols != matrixObj.cols) {
 			throw invalid_argument("the matrices don't have the same dimension!");
@@ -97,7 +63,7 @@ public:
 
 		return *this;
 	}
-
+	
 	Matrix<T> &operator-=(const Matrix<T> &matrixObj) {
 		if(this->rows != matrixObj.rows || this->cols != matrixObj.cols) {
 			throw invalid_argument("the matrices don't have the same dimension!");
@@ -110,6 +76,20 @@ public:
 		}
 
 		return *this;
+	}
+
+	friend const Matrix<T> operator+(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2)const {
+		Matrix<T> result;
+		result = matrixObj1;
+		result+=matrixObj2;
+		return result;
+	}
+
+	friend Matrix<T> operator-(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
+		Matrix<T> result;
+		result = matrixObj1;
+		result-=matrixObj2;
+		return result;
 	}
 
 	Matrix<T> &operator*=(const vector<T> &v) {
@@ -151,20 +131,9 @@ public:
 	}
 
 	friend Matrix<T> operator*(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
-		if(matrixObj1.cols != matrixObj2.rows){
-			throw invalid_argument("the matrices can't be multiplied!");
-		}
-
-		Matrix<T> result(matrixObj1.rows, matrixObj2.cols);
-
-		for(unsigned i = 0; i < matrixObj1.rows; ++i) {
-			for(unsigned j = 0; j < matrixObj2.cols; ++j) {
-				for(unsigned k = 0; k < matrixObj1.cols; ++k) {
-					result.matrix[i][j] += matrixObj1.matrix[i][k] * matrixObj2.matrix[k][j];
-				}
-			}
-		}
-
+		Matrix<T> result;
+		result = matrixObj1;
+		result*=matrixObj2;
 		return result;
 	}
 
@@ -183,31 +152,7 @@ public:
 
 		return result;
 	}
-
-	friend Matrix<T> operator*(const T &num, const Matrix<T> &matrixObj) {
-		Matrix<T> result(matrixObj.rows, matrixObj.cols);
-
-		for(unsigned i = 0; i < matrixObj.rows; ++i) {
-			for(unsigned j = 0; j < matrixObj.cols; ++j) {
-				result.matrix[i][j] = num * matrixObj.matrix[i][j];
-			}
-		}
-
-		return result;
-	}
-
-	friend Matrix<T> operator*(const Matrix<T> &matrixObj, const T &num) {
-		Matrix<T> result(matrixObj.rows, matrixObj.cols);
-
-		for(unsigned i = 0; i < matrixObj.rows; ++i) {
-			for(unsigned j = 0; j < matrixObj.cols; ++j) {
-				result.matrix[i][j] = num * matrixObj.matrix[i][j];
-			}
-		}
-
-		return result;
-	}
-
+	
 	Matrix<T> &operator*=(const T &num) {
 		for(unsigned i = 0; i < this->rows; ++i) {
 			for(unsigned j = 0; j < this->cols; ++j) {
@@ -217,4 +162,20 @@ public:
 
 		return *this;
 	}
+
+	friend Matrix<T> operator*(const T &num, const Matrix<T> &matrixObj) {
+		Matrix<T> result;
+		result = matrixObj;
+		result*=num;
+		return result;
+	}
+
+	friend Matrix<T> operator*(const Matrix<T> &matrixObj, const T &num) {
+		Matrix<T> result;
+		result = matrixObj;
+		result*=num;
+		return result;
+	}
+
+	
 };

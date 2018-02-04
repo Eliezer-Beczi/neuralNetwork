@@ -12,7 +12,7 @@ activationFunction<T>::~activationFunction() {
 
 template <class T>
 T activationFunction<T>::sigmoid(const T &x) {
-	return 1 / (1 + pow(M_E, -x));
+	return 1 / (1 + exp(-x));
 }
 
 template <class T>
@@ -22,7 +22,9 @@ T activationFunction<T>::tanh(const T &x) {
 
 template <class T>
 T activationFunction<T>::derivative_sigmoid(const T &x) {
-	return x * (1 - x);
+	T temp = sigmoid(x);
+
+	return temp * (1 - temp);
 }
 
 template <class T>

@@ -13,8 +13,8 @@ Matrix<T>::Matrix(unsigned const &numOfRows, unsigned const &numOfCols) {
 }
 
 template<class T>
-Matrix<T>::Matrix(const Matrix<T>&cpy){
-	*this=cpy;
+Matrix<T>::Matrix(const Matrix<T>&cpy) {
+	*this = cpy;
 }
 
 template <class T>
@@ -61,9 +61,7 @@ template <class T>
 Matrix<T> Matrix<T>::toRowVector(const vector<T> &v) {
 	Matrix<T> result(1, v.size());
 
-	for(unsigned i = 0; i < v.size(); ++i){
-		result.matrix[0][i] = v[i];
-	}
+	result.matrix[0] = v;
 
 	return result;
 }

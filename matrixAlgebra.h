@@ -15,7 +15,6 @@ private:
 
 public:
 	Matrix(unsigned const&, unsigned const&);
-	\\\copy constructor
 	Matrix(const Matrix<T>&);
 	~Matrix();
 	void fillRand();
@@ -38,14 +37,15 @@ public:
 	}
 
 	Matrix<T> &operator=(const Matrix<T> &matrixObj) {
-		
-		if(this==&matrixObj){
+		if(this == &matrixObj){
 			return *this;
 		}
-		
+
+		vector<vector<T>>().swap(this->matrix);
+
 		this->rows = matrixObj.rows;
 		this->cols = matrixObj.cols;
-		this->matrix=matrixObj.matrix;
+		this->matrix = matrixObj.matrix;
 
 		return *this;
 	}
@@ -78,17 +78,21 @@ public:
 		return *this;
 	}
 
-	friend const Matrix<T> operator+(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2)const {
+	friend Matrix<T> operator+(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
 		Matrix<T> result;
+
 		result = matrixObj1;
-		result+=matrixObj2;
+		result += matrixObj2;
+
 		return result;
 	}
 
 	friend Matrix<T> operator-(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
 		Matrix<T> result;
+
 		result = matrixObj1;
-		result-=matrixObj2;
+		result -= matrixObj2;
+
 		return result;
 	}
 
@@ -132,8 +136,10 @@ public:
 
 	friend Matrix<T> operator*(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
 		Matrix<T> result;
+
 		result = matrixObj1;
-		result*=matrixObj2;
+		result *= matrixObj2;
+
 		return result;
 	}
 
@@ -165,17 +171,19 @@ public:
 
 	friend Matrix<T> operator*(const T &num, const Matrix<T> &matrixObj) {
 		Matrix<T> result;
+
 		result = matrixObj;
-		result*=num;
+		result *= num;
+
 		return result;
 	}
 
 	friend Matrix<T> operator*(const Matrix<T> &matrixObj, const T &num) {
 		Matrix<T> result;
-		result = matrixObj;
-		result*=num;
-		return result;
-	}
 
-	
+		result = matrixObj;
+		result *= num;
+
+		return result;
+	}	
 };

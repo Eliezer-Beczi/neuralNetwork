@@ -79,25 +79,39 @@ public:
 	}
 
 	friend Matrix<T> operator+(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
-		Matrix<T> result;
+		if(matrixObj1.rows != matrixObj2.rows || matrixObj1.cols != matrixObj2.cols) {
+			throw invalid_argument("the matrices don't have the same dimension!");
+		}
 
-		result = matrixObj1;
-		result += matrixObj2;
+		Matrix<T> result(matrixObj1.rows, matrixObj1.cols);
+
+		for(unsigned i = 0; i < matrixObj1.rows; ++i) {
+			for(unsigned j = 0; j < matrixObj1.cols; ++j) {
+				result.matrix[i][j] = matrixObj1.matrix[i][j] + matrixObj2.matrix[i][j];
+			}
+		}
 
 		return result;
 	}
 
 	friend Matrix<T> operator-(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
-		Matrix<T> result;
+		if(matrixObj1.rows != matrixObj2.rows || matrixObj1.cols != matrixObj2.cols) {
+			throw invalid_argument("the matrices don't have the same dimension!");
+		}
 
-		result = matrixObj1;
-		result -= matrixObj2;
+		Matrix<T> result(matrixObj1.rows, matrixObj1.cols);
+
+		for(unsigned i = 0; i < matrixObj1.rows; ++i) {
+			for(unsigned j = 0; j < matrixObj1.cols; ++j) {
+				result.matrix[i][j] = matrixObj1.matrix[i][j] - matrixObj2.matrix[i][j];
+			}
+		}
 
 		return result;
 	}
 
 	Matrix<T> &operator*=(const vector<T> &v) {
-		if(this->cols != v.size()){
+		if(this->cols != v.size()) {
 			throw invalid_argument("the matrix can't be multiplied by the vector!");
 		}
 
@@ -115,7 +129,7 @@ public:
 	}
 
 	Matrix<T> &operator*=(const Matrix<T> &matrixObj) {
-		if(this->cols != matrixObj.rows){
+		if(this->cols != matrixObj.rows) {
 			throw invalid_argument("the matrices can't be multiplied!");
 		}
 
@@ -135,16 +149,25 @@ public:
 	}
 
 	friend Matrix<T> operator*(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
-		Matrix<T> result;
+		if(matrixObj1.cols != matrixObj2.rows) {
+			throw invalid_argument("the matrices can't be multiplied!");
+		}
 
-		result = matrixObj1;
-		result *= matrixObj2;
+		Matrix<T> result(matrixObj1.rows, matrixObj2.cols);
+
+		for(unsigned i = 0; i < matrixObj1.rows; ++i) {
+			for(unsigned j = 0; j < matrixObj2.cols; ++j) {
+				for(unsigned k = 0; k < matrixObj1.cols; ++k) {
+					result.matrix[i][j] += matrixObj1.matrix[i][k] * matrixObj2.matrix[k][j];
+				}
+			}
+		}
 
 		return result;
 	}
 
 	friend Matrix<T> operator*(const Matrix<T> &matrixObj, const vector<T> &v) {
-		if(matrixObj.cols != v.size()){
+		if(matrixObj.cols != v.size()) {
 			throw invalid_argument("the matrix can't be multiplied by the vector!");
 		}
 
@@ -160,9 +183,9 @@ public:
 	}
 	
 	Matrix<T> &operator*=(const T &num) {
-		for(unsigned i = 0; i < this->rows; ++i) {
-			for(unsigned j = 0; j < this->cols; ++j) {
-				this->matrix[i][j] *= num;
+		for(auto &&v : this->matrix) {
+			for(auto &&d : v) {
+				d *= num;
 			}
 		}
 
@@ -170,20 +193,26 @@ public:
 	}
 
 	friend Matrix<T> operator*(const T &num, const Matrix<T> &matrixObj) {
-		Matrix<T> result;
+		Matrix<T> result(matrixObj.rows, matrixObj.cols);
 
-		result = matrixObj;
-		result *= num;
+		for(unsigned i = 0; i < matrixObj.rows; ++i) {
+			for(unsigned j = 0; j < matrixObj.cols; ++j) {
+				result.matrix[i][j] = num * matrixObj.matrix[i][j];
+			}
+		}
 
 		return result;
 	}
 
 	friend Matrix<T> operator*(const Matrix<T> &matrixObj, const T &num) {
-		Matrix<T> result;
+		Matrix<T> result(matrixObj.rows, matrixObj.cols);
 
-		result = matrixObj;
-		result *= num;
+		for(unsigned i = 0; i < matrixObj.rows; ++i) {
+			for(unsigned j = 0; j < matrixObj.cols; ++j) {
+				result.matrix[i][j] = num * matrixObj.matrix[i][j];
+			}
+		}
 
 		return result;
-	}	
+	}
 };

@@ -13,6 +13,8 @@ void init(function<T(const T&)> &myActFunc, function<T(const T&)> &derivative_my
 		myActFunc = activationFunction<T>::tanh;
 		derivative_myActFunc = activationFunction<T>::derivative_tanh;
 	}
+
+	srand(time(NULL));
 }
 
 int main(int argc, char const *argv[]) {

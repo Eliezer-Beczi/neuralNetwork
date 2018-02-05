@@ -8,8 +8,6 @@ Matrix<T>::Matrix(unsigned const &numOfRows, unsigned const &numOfCols) {
 	for(unsigned i = 0; i < numOfRows; ++i) {
 		this->matrix.push_back(vector<T>(numOfCols));
 	}
-
-	srand(time(NULL));
 }
 
 template<class T>

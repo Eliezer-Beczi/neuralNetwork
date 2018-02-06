@@ -17,17 +17,16 @@ private:
 	unsigned precision;
 
 public:
-	Matrix(unsigned const&, unsigned const&, unsigned const &width = 10, unsigned const &precision = 2);
+	Matrix(unsigned const&, unsigned const&, unsigned const &width = 12, unsigned const &precision = 4);
 	Matrix(const Matrix<T>&);
 	~Matrix();
 
-	void fillRand();
+	void fillRand(const T &lowerBound = 1.0, const T &upperBound = 10.0);
 
 	static Matrix<T> applyFunction(const Matrix<T>&, const function<T(const T&)>&);
 	static vector<T> toArray(const Matrix<T>&);
 	static Matrix<T> toRowVector(const vector<T>&);
 	static Matrix<T> toColumnVector(const vector<T>&);
-	static Matrix<T> transpose(const Matrix<T>&);
 
 	Matrix<T> &operator=(const Matrix<T>&);
 	Matrix<T> &operator+=(const Matrix<T>&);
@@ -202,22 +201,74 @@ public:
 	}
 
 	/**
-	=======================================================================================
-	||																					 ||
-	||																					 ||
-	||THIS FUNCTION MULTIPLIES THE GIVEN MATRIX WITH ITS TRANSPOSE AND RETURNS THE RESULT||
-	||																					 ||
-	||													 								 ||
-	=======================================================================================
+	============================================================================================================
+	||																					 					  ||
+	||																					 					  ||
+	||THIS FUNCTION MULTIPLIES THE TRANSPOSE OF THE FIRST MATRIX WITH THE SECOND MATRIX AND RETURNS THE RESULT||
+	||																										  ||
+	||													 													  ||
+	============================================================================================================
 	*/
-	friend Matrix<T> operator~(const Matrix<T> &matrixObj) {
-		Matrix<T> result(matrixObj.rows, matrixObj.cols);
+	friend Matrix<T> operator<<(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
+		if(matrixObj1.rows != matrixObj2.rows) {
+			throw invalid_argument("the matrices can't be multiplied!");
+		}
 
-		for(unsigned i = 0; i < matrixObj.rows; ++i) {
-			for(unsigned j = 0; j < matrixObj.cols; ++j) {
-				for(unsigned k = 0; k < matrixObj.cols; ++k) {
-					result.matrix[i][j] += matrixObj.matrix[k][i] * matrixObj.matrix[k][j];
+		Matrix<T> result(matrixObj1.cols, matrixObj2.cols);
+
+		for(unsigned i = 0; i < matrixObj1.cols; ++i) {
+			for(unsigned j = 0; j < matrixObj2.cols; ++j) {
+				for(unsigned k = 0; k < matrixObj1.rows; ++k) {
+					result.matrix[i][j] += matrixObj1.matrix[k][i] * matrixObj2.matrix[k][j];
 				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	============================================================================================================
+	||																					 					  ||
+	||																					 					  ||
+	||THIS FUNCTION MULTIPLIES THE FIRST MATRIX WITH THE TRANSPOSE OF THE SECOND MATRIX AND RETURNS THE RESULT||
+	||																										  ||
+	||													 													  ||
+	============================================================================================================
+	*/
+	friend Matrix<T> operator>>(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
+		if(matrixObj1.cols != matrixObj2.cols) {
+			throw invalid_argument("the matrices can't be multiplied!");
+		}
+
+		Matrix<T> result(matrixObj1.rows, matrixObj2.rows);
+
+		for(unsigned i = 0; i < matrixObj1.rows; ++i) {
+			for(unsigned j = 0; j < matrixObj2.rows; ++j) {
+				for(unsigned k = 0; k < matrixObj1.cols; ++k) {
+					result.matrix[i][j] += matrixObj1.matrix[i][k] * matrixObj2.matrix[j][k];
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	===========================================================
+	||														 ||
+	||														 ||
+	||THIS FUNCTION RETURNS THE TRANSPOSE OF THE GIVEN MATRIX||
+	||														 ||
+	||													 	 ||
+	===========================================================
+	*/
+	friend Matrix<T> operator~(const Matrix<T> &matrixObj){
+		Matrix<T> result(matrixObj.cols, matrixObj.rows);
+
+		for(unsigned i = 0; i < matrixObj.cols; ++i) {
+			for(unsigned j = 0; j < matrixObj.rows; ++j) {
+				result.matrix[i][j] = matrixObj.matrix[j][i];
 			}
 		}
 

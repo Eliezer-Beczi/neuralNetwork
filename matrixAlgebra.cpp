@@ -24,10 +24,10 @@ Matrix<T>::~Matrix() {
 }
 
 template <class T>
-void Matrix<T>::fillRand() {
+void Matrix<T>::fillRand(const T &lowerBound, const T &upperBound) {
 	random_device r;
 	default_random_engine re(r());
-	uniform_real_distribution<T> uniform_dist(1, 10);
+	uniform_real_distribution<T> uniform_dist(lowerBound, upperBound);
 
 	for(auto &&v : this->matrix) {
 		for(auto &&d : v) {
@@ -77,19 +77,6 @@ Matrix<T> Matrix<T>::toColumnVector(const vector<T> &v) {
 
 	for(unsigned i = 0; i < v.size(); ++i){
 		result.matrix[i][0] = v[i];
-	}
-
-	return result;
-}
-
-template <class T>
-Matrix<T> Matrix<T>::transpose(const Matrix<T> &matrixObj) {
-	Matrix<T> result(matrixObj.cols, matrixObj.rows);
-
-	for(unsigned i = 0; i < matrixObj.cols; ++i) {
-		for(unsigned j = 0; j < matrixObj.rows; ++j) {
-			result.matrix[i][j] = matrixObj.matrix[j][i];
-		}
 	}
 
 	return result;

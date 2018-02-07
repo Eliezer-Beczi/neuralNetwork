@@ -2,12 +2,28 @@
 
 template <class T>
 activationFunction<T>::activationFunction() {
+	this->couples["sigmoid"].actFunc = activationFunction<T>::sigmoid;
+	this->couples["sigmoid"].derivative_actFunc = activationFunction<T>::derivative_sigmoid;
 
+	this->couples["tanh"].actFunc = activationFunction<T>::tanh;
+	this->couples["tanh"].derivative_actFunc = activationFunction<T>::derivative_tanh;
 }
 
 template <class T>
 activationFunction<T>::~activationFunction() {
 
+}
+
+template <class T>
+typename activationFunction<T>::couple activationFunction<T>::getActivationFunction(const std::string &funcName) {
+	auto it = couples.find("funcName");
+
+	if(it != couples.end()) {
+		return couples["funcName"];
+	}
+	else {
+		throw std::invalid_argument("there is no such function!");
+	}
 }
 
 template <class T>

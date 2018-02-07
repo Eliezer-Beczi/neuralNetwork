@@ -1,17 +1,19 @@
+#ifndef MATRIXALGEBRA_H_
+#define MATRIXALGEBRA_H_
+
 #include <functional>
 #include <iostream>
 #include <iomanip>
 #include <vector>
 #include <random>
 
-using namespace std;
-
 template <class T>
 class Matrix {
 private:
 	unsigned rows;
 	unsigned cols;
-	vector<vector<T>> matrix;
+	
+	std::vector<std::vector<T>> matrix;
 
 	unsigned width;
 	unsigned precision;
@@ -23,16 +25,16 @@ public:
 
 	void fillRand(const T &lowerBound = 1.0, const T &upperBound = 10.0);
 
-	static Matrix<T> applyFunction(const Matrix<T>&, const function<T(const T&)>&);
-	static vector<T> toArray(const Matrix<T>&);
-	static Matrix<T> toRowVector(const vector<T>&);
-	static Matrix<T> toColumnVector(const vector<T>&);
+	static Matrix<T> applyFunction(const Matrix<T>&, const std::function<T(const T&)>&);
+	static std::vector<T> toArray(const Matrix<T>&);
+	static Matrix<T> toRowVector(const std::vector<T>&);
+	static Matrix<T> toColumnVector(const std::vector<T>&);
 
 	Matrix<T> &operator=(const Matrix<T>&);
 	Matrix<T> &operator+=(const Matrix<T>&);
 	Matrix<T> &operator-=(const Matrix<T>&);
 	Matrix<T> &operator*=(const T&);
-	Matrix<T> &operator*=(const vector<T>&);
+	Matrix<T> &operator*=(const std::vector<T>&);
 	Matrix<T> &operator*=(const Matrix<T>&);
 
 	/**
@@ -44,13 +46,13 @@ public:
 	||												   ||
 	=====================================================
 	*/
-	friend ostream &operator<<(ostream &os, const Matrix<T> &matrixObj) {
+	friend std::ostream &operator<<(std::ostream &os, const Matrix<T> &matrixObj) {
 		for(auto &&v : matrixObj.matrix) {
 			for(auto &&d : v) {
-				os << setprecision(matrixObj.precision) << setw(matrixObj.width) << d << ' ';
+				os << std::setprecision(matrixObj.precision) << std::setw(matrixObj.width) << d << ' ';
 			}
 
-			os << endl;
+			os << std::endl;
 		}
 
 		return os;
@@ -67,7 +69,7 @@ public:
 	*/
 	friend Matrix<T> operator+(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
 		if(matrixObj1.rows != matrixObj2.rows || matrixObj1.cols != matrixObj2.cols) {
-			throw invalid_argument("the matrices don't have the same dimension!");
+			throw std::invalid_argument("the matrices don't have the same dimension!");
 		}
 
 		Matrix<T> result(matrixObj1.rows, matrixObj1.cols);
@@ -92,7 +94,7 @@ public:
 	*/
 	friend Matrix<T> operator-(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
 		if(matrixObj1.rows != matrixObj2.rows || matrixObj1.cols != matrixObj2.cols) {
-			throw invalid_argument("the matrices don't have the same dimension!");
+			throw std::invalid_argument("the matrices don't have the same dimension!");
 		}
 
 		Matrix<T> result(matrixObj1.rows, matrixObj1.cols);
@@ -117,7 +119,7 @@ public:
 	*/
 	friend Matrix<T> operator*(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
 		if(matrixObj1.cols != matrixObj2.rows) {
-			throw invalid_argument("the matrices can't be multiplied!");
+			throw std::invalid_argument("the matrices can't be multiplied!");
 		}
 
 		Matrix<T> result(matrixObj1.rows, matrixObj2.cols);
@@ -142,9 +144,9 @@ public:
 	||													 								  ||
 	========================================================================================
 	*/
-	friend Matrix<T> operator*(const Matrix<T> &matrixObj, const vector<T> &v) {
+	friend Matrix<T> operator*(const Matrix<T> &matrixObj, const std::vector<T> &v) {
 		if(matrixObj.cols != v.size()) {
-			throw invalid_argument("the matrix can't be multiplied by the vector!");
+			throw std::invalid_argument("the matrix can't be multiplied by the vector!");
 		}
 
 		Matrix<T> result(matrixObj.rows, 1);
@@ -211,7 +213,7 @@ public:
 	*/
 	friend Matrix<T> operator<<(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
 		if(matrixObj1.rows != matrixObj2.rows) {
-			throw invalid_argument("the matrices can't be multiplied!");
+			throw std::invalid_argument("the matrices can't be multiplied!");
 		}
 
 		Matrix<T> result(matrixObj1.cols, matrixObj2.cols);
@@ -238,7 +240,7 @@ public:
 	*/
 	friend Matrix<T> operator>>(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
 		if(matrixObj1.cols != matrixObj2.cols) {
-			throw invalid_argument("the matrices can't be multiplied!");
+			throw std::invalid_argument("the matrices can't be multiplied!");
 		}
 
 		Matrix<T> result(matrixObj1.rows, matrixObj2.rows);
@@ -263,7 +265,7 @@ public:
 	||													 	 ||
 	===========================================================
 	*/
-	friend Matrix<T> operator~(const Matrix<T> &matrixObj){
+	friend Matrix<T> operator~(const Matrix<T> &matrixObj) {
 		Matrix<T> result(matrixObj.cols, matrixObj.rows);
 
 		for(unsigned i = 0; i < matrixObj.cols; ++i) {
@@ -275,3 +277,5 @@ public:
 		return result;
 	}
 };
+
+#endif

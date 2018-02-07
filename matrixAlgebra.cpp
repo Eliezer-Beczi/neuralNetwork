@@ -6,7 +6,7 @@ Matrix<T>::Matrix(unsigned const &numOfRows, unsigned const &numOfCols, unsigned
 	this->cols = numOfCols;
 
 	for(unsigned i = 0; i < numOfRows; ++i) {
-		this->matrix.push_back(vector<T>(numOfCols));
+		this->matrix.push_back(std::vector<T>(numOfCols));
 	}
 
 	this->width = width;
@@ -14,8 +14,12 @@ Matrix<T>::Matrix(unsigned const &numOfRows, unsigned const &numOfCols, unsigned
 }
 
 template<class T>
-Matrix<T>::Matrix(const Matrix<T>&cpy) {
-	*this = cpy;
+Matrix<T>::Matrix(const Matrix<T> &cpy) {
+	this->rows = cpy.rows;
+	this->cols = cpy.cols;
+	this->matrix = cpy.matrix;
+	this->width = cpy.width;
+	this->precision = cpy.precision;
 }
 
 template <class T>
@@ -25,9 +29,9 @@ Matrix<T>::~Matrix() {
 
 template <class T>
 void Matrix<T>::fillRand(const T &lowerBound, const T &upperBound) {
-	random_device r;
-	default_random_engine re(r());
-	uniform_real_distribution<T> uniform_dist(lowerBound, upperBound);
+	std::random_device r;
+	std::default_random_engine re(r());
+	std::uniform_real_distribution<T> uniform_dist(lowerBound, upperBound);
 
 	for(auto &&v : this->matrix) {
 		for(auto &&d : v) {
@@ -37,7 +41,7 @@ void Matrix<T>::fillRand(const T &lowerBound, const T &upperBound) {
 }
 
 template <class T>
-Matrix<T> Matrix<T>::applyFunction(const Matrix<T> &matrixObj, const function<T(const T&)> &myActFunc) {
+Matrix<T> Matrix<T>::applyFunction(const Matrix<T> &matrixObj, const std::function<T(const T&)> &myActFunc) {
 	Matrix<T> result(matrixObj.rows, matrixObj.cols);
 
 	for(unsigned i = 0; i < matrixObj.rows; ++i) {
@@ -50,8 +54,8 @@ Matrix<T> Matrix<T>::applyFunction(const Matrix<T> &matrixObj, const function<T(
 }
 
 template <class T>
-vector<T> Matrix<T>::toArray(const Matrix<T> &matrixObj) {
-	vector<T> result;
+std::vector<T> Matrix<T>::toArray(const Matrix<T> &matrixObj) {
+	std::vector<T> result;
 
 	for(auto &&v : matrixObj.matrix) {
 		for(auto &&d : v) {
@@ -63,7 +67,7 @@ vector<T> Matrix<T>::toArray(const Matrix<T> &matrixObj) {
 }
 
 template <class T>
-Matrix<T> Matrix<T>::toRowVector(const vector<T> &v) {
+Matrix<T> Matrix<T>::toRowVector(const std::vector<T> &v) {
 	Matrix<T> result(1, v.size());
 
 	result.matrix[0] = v;
@@ -72,7 +76,7 @@ Matrix<T> Matrix<T>::toRowVector(const vector<T> &v) {
 }
 
 template <class T>
-Matrix<T> Matrix<T>::toColumnVector(const vector<T> &v) {
+Matrix<T> Matrix<T>::toColumnVector(const std::vector<T> &v) {
 	Matrix<T> result(v.size(), 1);
 
 	for(unsigned i = 0; i < v.size(); ++i){
@@ -97,7 +101,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T> &matrixObj) {
 		return *this;
 	}
 
-	vector<vector<T>>().swap(this->matrix);
+	std::vector<std::vector<T>>().swap(this->matrix);
 
 	this->rows = matrixObj.rows;
 	this->cols = matrixObj.cols;
@@ -118,7 +122,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T> &matrixObj) {
 template <class T>
 Matrix<T>& Matrix<T>::operator+=(const Matrix<T> &matrixObj) {
 	if(this->rows != matrixObj.rows || this->cols != matrixObj.cols) {
-		throw invalid_argument("the matrices don't have the same dimension!");
+		throw std::invalid_argument("the matrices don't have the same dimension!");
 	}
 
 	for(unsigned i = 0; i < this->rows; ++i) {
@@ -142,7 +146,7 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix<T> &matrixObj) {
 template <class T>
 Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &matrixObj) {
 	if(this->rows != matrixObj.rows || this->cols != matrixObj.cols) {
-		throw invalid_argument("the matrices don't have the same dimension!");
+		throw std::invalid_argument("the matrices don't have the same dimension!");
 	}
 
 	for(unsigned i = 0; i < this->rows; ++i) {
@@ -164,9 +168,9 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &matrixObj) {
 ========================================================================================
 */
 template <class T>
-Matrix<T>& Matrix<T>::operator*=(const vector<T> &v) {
+Matrix<T>& Matrix<T>::operator*=(const std::vector<T> &v) {
 	if(this->cols != v.size()) {
-		throw invalid_argument("the matrix can't be multiplied by the vector!");
+		throw std::invalid_argument("the matrix can't be multiplied by the vector!");
 	}
 
 	Matrix<T> result(this->rows, 1);
@@ -194,7 +198,7 @@ Matrix<T>& Matrix<T>::operator*=(const vector<T> &v) {
 template <class T>
 Matrix<T>& Matrix<T>::operator*=(const Matrix<T> &matrixObj) {
 	if(this->cols != matrixObj.rows) {
-		throw invalid_argument("the matrices can't be multiplied!");
+		throw std::invalid_argument("the matrices can't be multiplied!");
 	}
 
 	Matrix<T> result(this->rows, matrixObj.cols);

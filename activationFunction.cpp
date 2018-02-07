@@ -16,10 +16,10 @@ activationFunction<T>::~activationFunction() {
 
 template <class T>
 typename activationFunction<T>::couple activationFunction<T>::getActivationFunction(const std::string &funcName) {
-	auto it = couples.find("funcName");
+	auto it = couples.find(funcName);
 
 	if(it != couples.end()) {
-		return couples["funcName"];
+		return couples[funcName];
 	}
 	else {
 		throw std::invalid_argument("there is no such function!");

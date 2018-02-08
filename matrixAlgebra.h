@@ -5,7 +5,6 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#include <random>
 
 template <class T>
 class Matrix {
@@ -22,8 +21,6 @@ public:
 	Matrix(unsigned const&, unsigned const&, unsigned const &width = 12, unsigned const &precision = 4);
 	Matrix(const Matrix<T>&);
 	~Matrix();
-
-	void fillRand(const T &lowerBound = 1.0, const T &upperBound = 10.0);
 
 	static Matrix<T> applyFunction(const Matrix<T>&, const std::function<T(const T&)>&);
 	static std::vector<T> toArray(const Matrix<T>&);

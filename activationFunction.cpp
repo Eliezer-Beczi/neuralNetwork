@@ -51,5 +51,6 @@ typename activationFunction<T>::couple activationFunction<T>::getActivationFunct
 	}
 }
 
+template class activationFunction<float>;
 template class activationFunction<double>;
 template class activationFunction<long double>;

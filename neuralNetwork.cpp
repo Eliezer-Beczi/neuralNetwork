@@ -27,3 +27,28 @@ template <class T>
 neuralNetwork<T>::~neuralNetwork() {
 
 }
+
+template <class T>
+void neuralNetwork<T>::feedForward(const std::vector<T> &inputValues) {
+	if(inputValues.size() != this->neurons[0].size() - 1) {
+		throw std::invalid_argument("the number of input values doesn't match the number of input nodes!");
+	}
+
+	// Assign the input values to the input neurons
+	for(unsigned i = 0; i < inputValues.size(); ++i) {
+		this->neurons[0][i].setOutputValue(inputValues[i]);
+	}
+
+	// Forward propagate
+	for(unsigned i = 1; i < this->neurons.size(); ++i) {
+		std::vector<neuron<T>> &prevLayer = this->neurons[i];
+
+		for(unsigned j = 0; j < this->neurons[i].size() - 1; ++j) {
+			this->neurons[i][j].feedForward(prevLayer, this->actFunc);
+		}
+	}
+}
+
+template class edge<float>;
+template class neuralNetwork<double>;
+template class neuralNetwork<long double>;

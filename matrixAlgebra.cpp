@@ -28,19 +28,6 @@ Matrix<T>::~Matrix() {
 }
 
 template <class T>
-void Matrix<T>::fillRand(const T &lowerBound, const T &upperBound) {
-	std::random_device r;
-	std::default_random_engine re(r());
-	std::uniform_real_distribution<T> uniform_dist(lowerBound, upperBound);
-
-	for(auto &&v : this->matrix) {
-		for(auto &&d : v) {
-			d = uniform_dist(re);
-		}
-	}
-}
-
-template <class T>
 Matrix<T> Matrix<T>::applyFunction(const Matrix<T> &matrixObj, const std::function<T(const T&)> &myActFunc) {
 	Matrix<T> result(matrixObj.rows, matrixObj.cols);
 
@@ -236,5 +223,6 @@ Matrix<T>& Matrix<T>::operator*=(const T &num) {
 	return *this;
 }
 
+template class Matrix<float>;
 template class Matrix<double>;
 template class Matrix<long double>;

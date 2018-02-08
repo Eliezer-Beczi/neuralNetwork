@@ -18,6 +18,8 @@ public:
 	neuralNetwork(const std::vector<unsigned>&, const std::string &funcName = "sigmoid");
 	neuralNetwork(const neuralNetwork<T>&);
 	~neuralNetwork();
+
+	void feedForward(const std::vector<T>&);
 };
 
 #endif

@@ -18,15 +18,14 @@ public:
 	activationFunction();
 	~activationFunction();
 
-	activationFunction<T>::couple getActivationFunction(const std::string&);
-
 	static T sigmoid(const T&);
 	static T tanh(const T&);
 	static T derivative_sigmoid(const T&);
 	static T derivative_tanh(const T&);
+	static typename activationFunction<T>::couple getActivationFunction(const std::string&);
 
 private:
-	std::map<std::string, activationFunction<T>::couple> couples;
+	static std::map<std::string, typename activationFunction<T>::couple> couples;
 };
 
 #endif

@@ -1,26 +1,60 @@
 #include "neuralNetwork.h"
 
 template <class T>
-neuralNetwork<T>::neuralNetwork(unsigned const &inputNeurons, unsigned const &hiddenNeurons, unsigned const &outputNeurons, const std::string &funcName) {
-	this->neurons.push_back(std::vector<neuron<T>>(inputNeurons + 1));
-	this->neurons.push_back(std::vector<neuron<T>>(hiddenNeurons + 1));
-	this->neurons.push_back(std::vector<neuron<T>>(outputNeurons + 1));
-	this->actFunc = activationFunction<T>::getActivationFunction(funcName);
+neuralNetwork<T>::neuralNetwork(unsigned const &inputNeurons, unsigned const &hiddenNeurons, unsigned const &outputNeurons, const std::string &funcName, const T &learningRate) {
+	this->neurons.push_back(inputNeurons);
+	this->neurons.push_back(hiddenNeurons);
+	this->neurons.push_back(outputNeurons);
+
+	this->weights.push_back(Matrix<T>(hiddenNeurons, inputNeurons));
+	this->weights.push_back(Matrix<T>(outputNeurons, hiddenNeurons));
+
+	// Init weights
+	this->weights[0].fillRand();
+	this->weights[1].fillRand();
+
+	this->biases.push_back(Matrix<T>(hiddenNeurons, 1));
+	this->biases.push_back(Matrix<T>(outputNeurons, 1));
+
+	// Init biases
+	this->biases[0].fillRand();
+	this->biases[1].fillRand();
+
+	this->actFunc = this->actFuncObj.getActivationFunction(funcName);
+
+	this->learningRate = learningRate;
+	this->numOfLayers = 3;
 }
 
 template <class T>
-neuralNetwork<T>::neuralNetwork(const std::vector<unsigned> &neurons, const std::string &funcName) {
-	for(auto &&d : neurons) {
-		this->neurons.push_back(std::vector<neuron<T>>(d + 1));
+neuralNetwork<T>::neuralNetwork(const std::vector<unsigned> &neurons, const std::string &funcName, const T &learningRate) {
+	this->neurons = neurons;
+
+	for(unsigned i = 0; i < neurons.size() - 1; ++i) {
+		this->weights.push_back(Matrix<T>(neurons[i + 1], neurons[i]));
+		this->weights.back().fillRand();
+
+		this->biases.push_back(Matrix<T>(neurons[i + 1], 1));
+		this->biases.back().fillRand();
 	}
 
-	this->actFunc = activationFunction<T>::getActivationFunction(funcName);
+	this->actFunc = this->actFuncObj.getActivationFunction(funcName);
+
+	this->learningRate = learningRate;
+	this->numOfLayers = neurons.size();
 }
 
 template <class T>
 neuralNetwork<T>::neuralNetwork(const neuralNetwork<T> &cpy) {
 	this->neurons = cpy.neurons;
+	this->weights = cpy.weights;
+	this->biases = cpy.biases;
+
 	this->actFunc = cpy.actFunc;
+	this->actFuncObj = cpy.actFuncObj;
+
+	this->numOfLayers = cpy.numOfLayers;
+	this->learningRate = cpy.learningRate;
 }
 
 template <class T>
@@ -29,26 +63,68 @@ neuralNetwork<T>::~neuralNetwork() {
 }
 
 template <class T>
-void neuralNetwork<T>::feedForward(const std::vector<T> &inputValues) {
-	if(inputValues.size() != this->neurons[0].size() - 1) {
+T neuralNetwork<T>::getLearningRate() {
+	return this->learningRate;
+}
+
+template <class T>
+void neuralNetwork<T>::setLearningRate(T const &learningRate) {
+	this->learningRate = learningRate;
+}
+
+template <class T>
+std::vector<T> neuralNetwork<T>::feedForward(const std::vector<T> &inputValues) {
+	if(inputValues.size() != this->neurons[0]) {
 		throw std::invalid_argument("the number of input values doesn't match the number of input nodes!");
 	}
 
-	// Assign the input values to the input neurons
-	for(unsigned i = 0; i < inputValues.size(); ++i) {
-		this->neurons[0][i].setOutputValue(inputValues[i]);
+	Matrix<T> inputs = Matrix<T>::toColumnVector(inputValues);
+
+	for(unsigned i = 0; i < this->numOfLayers - 1; ++i) {
+		inputs = this->weights[i] * inputs + this->biases[i];
+		inputs.applyFunction(this->actFunc.func);
 	}
 
-	// Forward propagate
-	for(unsigned i = 1; i < this->neurons.size(); ++i) {
-		std::vector<neuron<T>> &prevLayer = this->neurons[i];
-
-		for(unsigned j = 0; j < this->neurons[i].size() - 1; ++j) {
-			this->neurons[i][j].feedForward(prevLayer, this->actFunc);
-		}
-	}
+	return Matrix<T>::toArray(inputs);
 }
 
-template class edge<float>;
+template <class T>
+void neuralNetwork<T>::train(const std::vector<T> &inputValues, const std::vector<T> &targetValues) {
+	if(inputValues.size() != this->neurons[0]) {
+		throw std::invalid_argument("the number of input values doesn't match the number of input nodes!");
+	}
+
+	if(targetValues.size() != this->neurons.back()) {
+		throw std::invalid_argument("the number of target values doesn't match the number of output nodes!");
+	}
+
+	Matrix<T> inputs = Matrix<T>::toColumnVector(inputValues);
+	Matrix<T> targets = Matrix<T>::toColumnVector(targetValues);
+
+	std::vector<Matrix<T>> matrices;
+	matrices.push_back(inputs);
+
+	for(unsigned i = 0; i < this->numOfLayers - 1; ++i) {
+		Matrix<T> temp = this->weights[i] * matrices.back() + this->biases[i];
+		temp.applyFunction(this->actFunc.func);
+		matrices.push_back(temp);
+	}
+
+	unsigned i = this->numOfLayers - 2;
+	Matrix<T> errors = targets - matrices.back();
+
+	do {
+		Matrix<T> gradients = Matrix<T>::applyFunction(matrices[i + 1], this->actFunc.derivative_func);
+		gradients *= errors * this->learningRate;
+
+		this->weights[i] += gradients >> matrices[i];
+		this->biases[i] += gradients;
+
+		errors = this->weights[i] << errors;
+		--i;
+	} while(i >= 0);
+}
+
+template class neuralNetwork<float>;
 template class neuralNetwork<double>;
 template class neuralNetwork<long double>;

@@ -11,21 +11,22 @@ template <class T>
 class activationFunction {
 public:
 	struct couple {
-		std::function<T(const T&)> actFunc;
-		std::function<T(const T&)> derivative_actFunc;
+		std::function<T(const T&)> func;
+		std::function<T(const T&)> derivative_func;
 	};
 
 	activationFunction();
 	~activationFunction();
 
+	typename activationFunction<T>::couple getActivationFunction(const std::string&);
+
 	static T sigmoid(const T&);
 	static T tanh(const T&);
 	static T derivative_sigmoid(const T&);
 	static T derivative_tanh(const T&);
-	static typename activationFunction<T>::couple getActivationFunction(const std::string&);
 
 private:
-	static std::map<std::string, typename activationFunction<T>::couple> couples;
+	std::map<std::string, typename activationFunction<T>::couple> couples;
 };
 
 #endif

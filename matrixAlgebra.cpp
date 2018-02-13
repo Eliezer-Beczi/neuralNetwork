@@ -1,6 +1,12 @@
 #include "matrixAlgebra.h"
 
 template <class T>
+std::random_device Matrix<T>::r;
+
+template <class T>
+std::default_random_engine Matrix<T>::re(Matrix<T>::r());
+
+template <class T>
 Matrix<T>::Matrix(unsigned const &numOfRows, unsigned const &numOfCols, unsigned const &width, unsigned const &precision) {
 	this->rows = numOfRows;
 	this->cols = numOfCols;
@@ -25,6 +31,26 @@ Matrix<T>::Matrix(const Matrix<T> &cpy) {
 template <class T>
 Matrix<T>::~Matrix() {
 
+}
+
+template <class T>
+void Matrix<T>::fillRand(const T &lowerBound, const T &upperBound) {
+	std::uniform_real_distribution<T> uniform_dist(lowerBound, upperBound);
+
+	for(auto &&v : this->matrix) {
+		for(auto &&d : v) {
+			d = uniform_dist(Matrix<T>::re);
+		}
+	}
+}
+
+template <class T>
+void Matrix<T>::applyFunction(const std::function<T(const T&)> &myActFunc) {
+	for(auto &&v : this->matrix) {
+		for(auto &&d : v) {
+			d = myActFunc(d);
+		}
+	}
 }
 
 template <class T>
@@ -87,8 +113,6 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T> &matrixObj) {
 	if(this == &matrixObj){
 		return *this;
 	}
-
-	std::vector<std::vector<T>>().swap(this->matrix);
 
 	this->rows = matrixObj.rows;
 	this->cols = matrixObj.cols;

@@ -4,6 +4,7 @@
 #include <functional>
 #include <iostream>
 #include <iomanip>
+#include <random>
 #include <vector>
 
 template <class T>
@@ -17,10 +18,16 @@ private:
 	unsigned width;
 	unsigned precision;
 
+	static std::random_device r;
+	static std::default_random_engine re;
+
 public:
 	Matrix(unsigned const&, unsigned const&, unsigned const &width = 12, unsigned const &precision = 4);
 	Matrix(const Matrix<T>&);
 	~Matrix();
+
+	void fillRand(const T &lowerBound = -1.0, const T &upperBound = 1.0);
+	void applyFunction(const std::function<T(const T&)>&);
 
 	static Matrix<T> applyFunction(const Matrix<T>&, const std::function<T(const T&)>&);
 	static std::vector<T> toArray(const Matrix<T>&);

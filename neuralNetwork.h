@@ -4,22 +4,33 @@
 #include <iostream>
 #include <vector>
 
-#include "neuron.h"
+#include "matrixAlgebra.h"
 #include "activationFunction.h"
 
 template <class T>
 class neuralNetwork {
 private:
-	std::vector<std::vector<neuron<T>>> neurons;
+	T learningRate;
+	unsigned numOfLayers;
+
+	std::vector<unsigned> neurons;
+	std::vector<Matrix<T>> weights;
+	std::vector<Matrix<T>> biases;
+
+	activationFunction<T> actFuncObj;
 	typename activationFunction<T>::couple actFunc;
 
 public:
-	neuralNetwork(unsigned const&, unsigned const&, unsigned const&, const std::string &funcName = "sigmoid");
-	neuralNetwork(const std::vector<unsigned>&, const std::string &funcName = "sigmoid");
+	neuralNetwork(unsigned const&, unsigned const&, unsigned const&, const std::string &funcName = "sigmoid", const T &learningRate = 0.1);
+	neuralNetwork(const std::vector<unsigned>&, const std::string &funcName = "sigmoid", const T &learningRate = 0.1);
 	neuralNetwork(const neuralNetwork<T>&);
 	~neuralNetwork();
 
-	void feedForward(const std::vector<T>&);
+	T getLearningRate();
+	void setLearningRate(T const&);
+
+	std::vector<T> feedForward(const std::vector<T>&);
+	void train(const std::vector<T>&, const std::vector<T>&);
 };
 
 #endif

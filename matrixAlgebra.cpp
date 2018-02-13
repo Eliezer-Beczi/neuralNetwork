@@ -247,6 +247,30 @@ Matrix<T>& Matrix<T>::operator*=(const T &num) {
 	return *this;
 }
 
+/**
+====================================================================
+||														 		  ||
+||														 		  ||
+||THIS FUNCTION RETURNS THE HADAMARD PRODUCT OF THE GIVEN MATRICES||
+||															      ||
+||													 			  ||
+====================================================================
+*/
+template <class T>
+Matrix<T>& Matrix<T>::operator%=(const Matrix<T> &matrixObj) {
+	if(this->rows != matrixObj.rows || this->cols != matrixObj.cols) {
+		throw std::invalid_argument("the matrices must have the same dimension!");
+	}
+
+	for(unsigned i = 0; i < matrixObj.rows; ++i) {
+		for(unsigned j = 0; j < matrixObj.cols; ++j) {
+			this->matrix[i][j] *= matrixObj.matrix[i][j];
+		}
+	}
+
+	return *this;
+}
+
 template class Matrix<float>;
 template class Matrix<double>;
 template class Matrix<long double>;

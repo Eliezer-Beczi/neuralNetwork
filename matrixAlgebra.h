@@ -40,6 +40,7 @@ public:
 	Matrix<T> &operator*=(const T&);
 	Matrix<T> &operator*=(const std::vector<T>&);
 	Matrix<T> &operator*=(const Matrix<T>&);
+	Matrix<T> &operator%=(const Matrix<T>&);
 
 	/**
 	=====================================================
@@ -275,6 +276,31 @@ public:
 		for(unsigned i = 0; i < matrixObj.cols; ++i) {
 			for(unsigned j = 0; j < matrixObj.rows; ++j) {
 				result.matrix[i][j] = matrixObj.matrix[j][i];
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	====================================================================
+	||														 		  ||
+	||														 		  ||
+	||THIS FUNCTION RETURNS THE HADAMARD PRODUCT OF THE GIVEN MATRICES||
+	||															      ||
+	||													 			  ||
+	====================================================================
+	*/
+	friend Matrix<T> operator%(const Matrix<T> &matrixObj1, const Matrix<T> &matrixObj2) {
+		if(matrixObj1.rows != matrixObj2.rows || matrixObj1.cols != matrixObj2.cols) {
+			throw std::invalid_argument("the matrices must have the same dimension!");
+		}
+
+		Matrix<T> result(matrixObj1.rows, matrixObj1.cols);
+
+		for(unsigned i = 0; i < matrixObj1.rows; ++i) {
+			for(unsigned j = 0; j < matrixObj1.cols; ++j) {
+				result.matrix[i][j] = matrixObj1.matrix[i][j] * matrixObj2.matrix[i][j];
 			}
 		}
 

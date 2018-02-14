@@ -33,7 +33,7 @@ T activationFunction<T>::derivative_sigmoid(const T &x) {
 
 template <class T>
 T activationFunction<T>::derivative_tanh(const T &x) {
-	return 1 / pow(cosh(x), 2);
+	return 1 - x * x;
 }
 
 template <class T>

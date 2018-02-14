@@ -78,14 +78,14 @@ std::vector<T> neuralNetwork<T>::feedForward(const std::vector<T> &inputValues) 
 		throw std::invalid_argument("the number of input values doesn't match the number of input nodes!");
 	}
 
-	Matrix<T> outputs = Matrix<T>::toColumnVector(inputValues);
+	Matrix<T> inputs = Matrix<T>::toColumnVector(inputValues);
 
 	for(unsigned i = 0; i < this->numOfLayers - 1; ++i) {
-		outputs = this->weights[i] * outputs + this->biases[i];
-		outputs.applyFunction(this->actFunc.func);
+		inputs = this->weights[i] * inputs + this->biases[i];
+		inputs.applyFunction(this->actFunc.func);
 	}
 
-	return Matrix<T>::toArray(outputs);
+	return Matrix<T>::toArray(inputs);
 }
 
 template <class T>
@@ -98,11 +98,8 @@ void neuralNetwork<T>::train(const std::vector<T> &inputValues, const std::vecto
 		throw std::invalid_argument("the number of target values doesn't match the number of output nodes!");
 	}
 
-	Matrix<T> inputs = Matrix<T>::toColumnVector(inputValues);
-	Matrix<T> targets = Matrix<T>::toColumnVector(targetValues);
-
 	std::vector<Matrix<T>> matrices;
-	matrices.push_back(inputs);
+	matrices.push_back(Matrix<T>::toColumnVector(inputValues));
 
 	for(unsigned i = 0; i < this->numOfLayers - 1; ++i) {
 		Matrix<T> temp = this->weights[i] * matrices.back() + this->biases[i];
@@ -111,7 +108,7 @@ void neuralNetwork<T>::train(const std::vector<T> &inputValues, const std::vecto
 	}
 
 	unsigned i = this->numOfLayers - 2;
-	Matrix<T> errors = targets - matrices.back();
+	Matrix<T> errors = Matrix<T>::toColumnVector(targetValues) - matrices.back();
 
 	while(true) {
 		Matrix<T> gradients = Matrix<T>::applyFunction(matrices[i + 1], this->actFunc.derivative_func);
